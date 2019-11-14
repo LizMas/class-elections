@@ -1,0 +1,49 @@
+---
+title: "class-elections"
+output: html_document
+---
+
+```{r setup, include=FALSE, cache = TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(googlesheets4)
+library(broom)
+library(tidyverse)
+
+sheets_deauth()
+x <- read_sheet("1QA_Xv9tAbKhwFdQpnVa2hTjhEdg5zAl4WY5EVanWSo0")
+
+```
+
+
+```{r, cache=TRUE}
+
+# dvote, dem_adv 
+#alpha makes things more transparent
+
+plot <- ggplot(x, aes(x = dem_adv, y = dvote)) +
+  geom_jitter(height = 0.1, width = 0.1, alpha = 0.05) +
+  geom_smooth(method = "glm", se = FALSE)
+
+plot
+
+#explain dvote by dem_adv
+model <- glm(dvote ~ dem_adv, data = x)
+
+#explain dvote by female 
+
+plot_fem <- ggplot(x, aes(x = dem_adv, y = female)) +
+  geom_jitter(height = 0.1, width = 0.1, alpha = 0.05) +
+  geom_smooth(method = "glm", se = FALSE)
+
+model_fem <- glm(dvote ~female, data = x, family = "binomial")
+
+print(model_fem)
+summary(model_fem)
+
+#broom
+#summary(model_fem) %>% tidy()
+
+#what does the intercept mean? : 
+```
+
